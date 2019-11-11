@@ -1,11 +1,12 @@
-CREATE OR REPLACE TRIGGER "T_WF_CUROPT_TRIGGERYLS"
+TRIGGER "T_WF_CUROPT_TRIGGERYLS "
   before insert on workflow_currentoperator
   for each row
 
 DECLARE
  minID NUMBER;
 begin
-  IF :new.GROUPID > 0 THEN
+  select count(*) into minID from workflow_nodebase b where b.id=:new.NODEID and b.isend='1';
+  IF minID=0 and :new.GROUPID > 0 THEN
     select min(cc.ID)
       into minID
       from workflow_currentoperator cc
@@ -19,4 +20,3 @@ begin
 
   END IF;
 end;
-/
